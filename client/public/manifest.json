@@ -1,0 +1,24 @@
+{
+  "name": "PINAKK Marketplace",
+  "short_name": "PINAKK",
+  "description": "Shop Smart, Live Better with PINAKK - premium multi-category eCommerce marketplace for stationery, gifts, perfumes, and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#1E40AF",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["shopping", "business"]
+}

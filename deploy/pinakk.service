@@ -1,0 +1,16 @@
+[Unit]
+Description=PINAKK Docker Compose Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/pinakk
+ExecStart=/usr/bin/docker compose -f /opt/pinakk/docker-compose.prod.yml pull
+ExecStartPost=/usr/bin/docker compose -f /opt/pinakk/docker-compose.prod.yml up -d
+ExecStop=/usr/bin/docker compose -f /opt/pinakk/docker-compose.prod.yml down
+TimeoutStartSec=600
+
+[Install]
+WantedBy=multi-user.target

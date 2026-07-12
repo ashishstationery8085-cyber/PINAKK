@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#1E40AF" rx="20"/>
+  <circle cx="50" cy="35" r="12" fill="#FFA500"/>
+  <polygon points="50,50 60,65 40,65" fill="#FFA500"/>
+  <text x="50" y="85" font-size="24" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">P</text>
+</svg>

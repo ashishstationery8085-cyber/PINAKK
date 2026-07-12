@@ -1,0 +1,52 @@
+version: '3.9'
+services:
+  mongodb:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-example}
+
+  server:
+    image: ghcr.io/${GITHUB_OWNER:-your-org}/pinakk-server:latest
+    restart: unless-stopped
+    env_file:
+      - ./server/.env
+    depends_on:
+      - mongodb
+    networks:
+      - pinakk
+
+  client:
+    image: ghcr.io/${GITHUB_OWNER:-your-org}/pinakk-client:latest
+    restart: unless-stopped
+    env_file:
+      - ./client/.env.production
+    depends_on:
+      - server
+    networks:
+      - pinakk
+
+  nginx:
+    image: nginx:1.25-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./deploy/certs:/etc/nginx/certs:ro
+    depends_on:
+      - client
+      - server
+    networks:
+      - pinakk
+
+volumes:
+  mongo-data:
+
+networks:
+  pinakk:
+    driver: bridge
