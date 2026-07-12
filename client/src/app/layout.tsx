@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   publisher: 'PINAKK',
   metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'),
   icons: {
-    icon: '/favicon.svg',
-    apple: '/icon.svg',
+    icon: '/favicon.png',
+    apple: '/logo.png',
   },
   manifest: '/manifest.json',
   openGraph: {
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/favicon.svg',
+        url: '/logo.png',
         width: 192,
         height: 192,
         alt: 'PINAKK Logo',
