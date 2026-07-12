@@ -61,14 +61,9 @@ const TopNav = () => {
         <div className="mx-auto max-w-7xl px-4 py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <div className="text-4xl">☀️</div>
-                  <div className="absolute -right-1 -bottom-1 text-xl">→</div>
-                </div>
-                <span className="text-3xl font-bold text-slate-900">PINANKK</span>
-              </div>
+            <Link href="/" className="flex items-center gap-3">
+              <img src="/logo.png" alt="PINAKK" className="h-10 w-auto object-contain" />
+              <span className="text-2xl font-bold text-slate-900 hidden sm:inline">PINAKK</span>
             </Link>
 
             {/* Categories & Search */}

@@ -7,11 +7,14 @@ const Footer = () => {
       <div className="mx-auto max-w-7xl px-4 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
           {/* Logo & Description */}
-          <div className="lg:col-span-1">
-            <h3 className="text-2xl font-bold text-white">PINANKK</h3>
-            <p className="mt-3 text-sm leading-relaxed">
-              Shop Smart, Live Better with the premium marketplace for daily essentials and curated products.
-            </p>
+          <div className="lg:col-span-1 flex flex-col">
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="PINAKK" className="h-12 w-auto object-contain" />
+              <div>
+                <h3 className="text-2xl font-bold text-white">PINAKK</h3>
+                <p className="text-sm text-slate-300">Shop Smart, Live Better</p>
+              </div>
+            </div>
             <div className="mt-4 flex gap-3">
               <a href="#" className="text-white hover:text-secondary transition"><FiFacebook className="text-xl" /></a>
               <a href="#" className="text-white hover:text-secondary transition"><FiTwitter className="text-xl" /></a>
