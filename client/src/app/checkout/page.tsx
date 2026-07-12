@@ -11,7 +11,7 @@ const CheckoutPage = () => {
   const [cart, setCart] = useState<any>({ items: [] });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
-  const [shipping, setShipping] = useState({ address: '', city: '', postalCode: '', method: 'Standard', fee: 49 });
+  const [shipping, setShipping] = useState({ address: '', city: '', postalCode: '', method: 'home', fee: 49 });
   const [paymentMethod, setPaymentMethod] = useState('stripe');
   const [billingName, setBillingName] = useState('');
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -291,6 +291,47 @@ const CheckoutPage = () => {
 
         const rzp = new (window as any).Razorpay(options);
         rzp.open();
+      } else if (paymentMethod === 'cod') {
+        // Create order with Cash on Delivery
+        const orderPayload = {
+          shippingDetails: {
+            address: shipping.method === 'store' ? { storePickup: true } : { line1: shipping.address, city: shipping.city, postalCode: shipping.postalCode },
+            method: shipping.method,
+            fee: shipping.fee,
+          },
+          payment: {
+            method: 'cod',
+            provider: 'cod',
+            status: 'pending',
+            transactionId: null,
+            amount: total,
+          },
+          items: cart.items.map((item: any) => ({
+            product: item.product._id || item.product,
+            variant: item.variant,
+            quantity: item.quantity,
+            price: item.product?.price || item.price || 0,
+            total: item.total || item.quantity * (item.product?.price || item.price || 0),
+          })),
+        };
+
+        const orderHeaders = authHeaders();
+        const orderRequestHeaders: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+        if (orderHeaders.Authorization) {
+          orderRequestHeaders.Authorization = orderHeaders.Authorization;
+        }
+        const orderResponse = await fetch(`${API_BASE}/orders`, {
+          method: 'POST',
+          headers: orderRequestHeaders,
+          body: JSON.stringify(orderPayload),
+        });
+        const orderData = await orderResponse.json();
+        if (!orderData.success) throw new Error(orderData.message || 'Checkout failed.');
+
+        setMessage('Order placed with Cash on Delivery. Redirecting to orders...');
+        router.push('/orders');
       } else {
         throw new Error('Unsupported payment method');
       }
@@ -344,18 +385,41 @@ const CheckoutPage = () => {
                 required
               />
             </label>
-            <label className="block">
-              <span className="text-sm font-medium text-slate-700">Payment method</span>
-              <select
-                value={paymentMethod}
-                onChange={(event) => setPaymentMethod(event.target.value)}
-                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-primary"
-              >
-                <option value="cod">Cash on Delivery</option>
-                <option value="stripe">Stripe (Card)</option>
-                <option value="razorpay">Razorpay (UPI/Card)</option>
-              </select>
-            </label>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700">Delivery method</span>
+                <select
+                  value={shipping.method}
+                  onChange={(event) => {
+                    const method = event.target.value;
+                    let fee = 0;
+                    if (method === 'store') fee = 0;
+                    else if (method === 'express') fee = 99;
+                    else fee = 49; // home
+                    setShipping((prev) => ({ ...prev, method, fee }));
+                  }}
+                  className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-primary"
+                >
+                  <option value="store">Store pickup (Free)</option>
+                  <option value="home">Home delivery (Standard ₹49)</option>
+                  <option value="express">Express delivery (₹99)</option>
+                </select>
+              </label>
+
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700">Payment method</span>
+                <select
+                  value={paymentMethod}
+                  onChange={(event) => setPaymentMethod(event.target.value)}
+                  className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-primary"
+                >
+                  <option value="cod">Cash on Delivery</option>
+                  <option value="stripe">Stripe (Card)</option>
+                  <option value="razorpay">Razorpay (UPI/Card)</option>
+                </select>
+              </label>
+            </div>
             {paymentMethod === 'stripe' && (
               <div className="space-y-3">
                 <label className="block">
