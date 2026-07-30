@@ -30,6 +30,46 @@
 3. Run `docker compose up --build`.
 4. Open frontend at `http://localhost:3000` and API at `http://localhost:4000`.
 
+### Environment Variables
+
+**Server (.env):**
+```env
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/?appName=Cluster0
+JWT_SECRET=your_secure_jwt_secret
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+RAZORPAY_KEY_ID=your_razorpay_key
+RAZORPAY_KEY_SECRET=your_razorpay_secret
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+NODE_ENV=production
+```
+
+**Client (.env.local):**
+```env
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_key
+NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id
+NEXT_PUBLIC_CLOUDINARY_BASE=https://res.cloudinary.com/your-cloud-name/image/upload
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+### Database Seeding
+
+To populate the database with demo products:
+
+```bash
+cd server
+npm run seed
+```
+
+This will create:
+- 16 categories (Stationery, Notebooks, Pens, Art Supplies, etc.)
+- 140+ demo products with images, descriptions, and variants
+
+**Note:** Ensure your MongoDB Atlas IP is whitelisted before running the seed script.
+
 ## Features Included
 - Authentication: email/password, mobile OTP, social login hooks, JWT, RBAC
 - Product management: categories, brands, variants, gallery, video, review, related items
@@ -63,6 +103,7 @@ docker compose up --build
 ## Documentation
 - `API_DOCUMENTATION.md` — Full backend endpoint reference
 - `INSTALLATION_GUIDE.md` — Local setup, Docker, and production deployment instructions
+- `DEPLOYMENT.md` — Vercel/Netlify deployment guide with MongoDB Atlas setup
 
 ## API Documentation
 See `server/src/routes` and `server/src/controllers` for route definitions.
@@ -86,6 +127,7 @@ See `server/src/routes` and `server/src/controllers` for route definitions.
 - Integrate Razorpay, Stripe, Paytm, PhonePe via env variables
 - Use HTTPS, a CDN, and a static asset host for frontend
 - Set `NEXT_PUBLIC_API_URL` and server `MONGO_URI` before launch
+- The frontend now ships with SEO-ready metadata, sitemap, robots rules, and a polished home/catalog experience for deployment
 
 Deployment with Docker (recommended)
 - Copy `.env.production.example` to `.env` (or create `server/.env` and `client/.env.production`) and fill values.

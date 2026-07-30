@@ -12,7 +12,7 @@ export interface IVendor {
 }
 
 const vendorSchema = new Schema<IVendor>({
-  user: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  user: { type: Schema.Types.ObjectId as any, ref: 'User', required: true, unique: true },
   storeName: { type: String, required: true },
   verified: { type: Boolean, default: false },
   products: [{ type: Schema.Types.ObjectId, ref: 'Product' }],

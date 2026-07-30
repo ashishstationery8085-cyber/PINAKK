@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: '%s | PINAKK Marketplace'
   },
   description: 'PINAKK is your one-stop shop for stationery, office supplies, gifts, perfumes, accessories and general items. Best prices, fast delivery, and secure payments.',
-  keywords: ['stationery', 'office supplies', 'gifts', 'perfumes', 'accessories', 'online shopping', 'marketplace', 'e-commerce', 'PINAKK', 'Ashish Stationary'],
+  keywords: ['stationery', 'office supplies', 'gifts', 'perfumes', 'accessories', 'online shopping', 'marketplace', 'e-commerce', 'PINAKK', 'Ashish Stationary', 'Classmate', 'Navneet', 'Camlin'],
   authors: [{ name: 'PINAKK Team', url: 'https://pinakk.com' }],
   creator: 'PINAKK',
   publisher: 'PINAKK',
@@ -36,6 +36,13 @@ export const metadata: Metadata = {
       },
     ],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PINAKK Marketplace',
+    description: 'Premium online marketplace with smart search, deals, and fast delivery.',
+    images: ['/logo.png'],
+    creator: '@pinakk',
+  },
   robots: {
     index: true,
     follow: true,
@@ -50,11 +57,17 @@ export const metadata: Metadata = {
   verification: {
     google: 'your-google-verification-code',
   },
+  alternates: {
+    canonical: 'https://pinakk.com',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className="min-h-screen bg-background text-slate-900">
         <TopNav />
         <main>{children}</main>

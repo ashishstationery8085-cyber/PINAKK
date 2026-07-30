@@ -3,7 +3,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import 'express-async-errors';
-import connectDb from './utils/db';
 import authRoutes from './routes/auth.routes';
 import productRoutes from './routes/product.routes';
 import categoryRoutes from './routes/category.routes';
@@ -14,7 +13,9 @@ import orderRoutes from './routes/order.routes';
 import adminRoutes from './routes/admin.routes';
 import vendorRoutes from './routes/vendor.routes';
 import paymentRoutes from './routes/payment.routes';
+import mongoose from 'mongoose';
 import errorHandler from './middleware/error.middleware';
+import { seedDemoData } from './utils/seedDemoData';
 
 const app = express();
 
@@ -25,10 +26,38 @@ app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
-connectDb();
-
 app.get('/', (req, res) => {
   res.json({ name: 'PINAKK API', status: 'ok' });
+});
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', service: 'pinakk-server', database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
+});
+
+app.use((req, res, next) => {
+  if (req.path === '/' || req.path === '/health' || req.path === '/seed-demo') {
+    return next();
+  }
+
+  // Allow demo mode for products even without MongoDB
+  if (req.path.startsWith('/api/products')) {
+    return next();
+  }
+
+  if (req.path.startsWith('/api/') && mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ success: false, message: 'Database unavailable. Start MongoDB and retry.' });
+  }
+
+  return next();
+});
+
+app.post('/seed-demo', async (req, res) => {
+  try {
+    const result = await seedDemoData();
+    res.json({ success: true, ...result });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 app.use('/api/auth', authRoutes);

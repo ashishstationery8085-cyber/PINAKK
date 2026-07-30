@@ -25,3 +25,28 @@ export const createOrder = async (req: Request, res: Response) => {
   await Cart.findOneAndUpdate({ user: userId }, { items: [] });
   res.status(201).json({ success: true, order });
 };
+
+export const getOrders = async (req: Request, res: Response) => {
+  const orders = await Order.find({ user: (req as any).user._id });
+  res.json({ success: true, orders });
+};
+
+export const getOrderById = async (req: Request, res: Response) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+  res.json({ success: true, order });
+};
+
+export const updateOrderStatus = async (req: Request, res: Response) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+  order.status = req.body.status || order.status;
+  await order.save();
+  res.json({ success: true, order });
+};
+
+export const trackOrder = async (req: Request, res: Response) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+  res.json({ success: true, status: order.status, tracking: order.shippingDetails?.trackingId || null });
+};

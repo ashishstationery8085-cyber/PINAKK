@@ -10,6 +10,7 @@ type Product = {
   oldPrice?: number;
   image?: string;
   description?: string;
+  brand?: string;
 };
 
 const ProductCard = ({ product }: { product: Product }) => {
@@ -39,6 +40,7 @@ const ProductCard = ({ product }: { product: Product }) => {
       <div className="mt-4 flex-1">
         <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{product.category}</p>
         <h3 className="mt-2 text-lg font-semibold text-slate-900 line-clamp-2">{product.name}</h3>
+        {product.brand ? <p className="mt-1 text-sm font-medium text-slate-500">{product.brand}</p> : null}
         {product.description ? <p className="mt-2 text-sm text-slate-600 line-clamp-2">{product.description}</p> : null}
       </div>
 

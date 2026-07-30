@@ -40,7 +40,7 @@ export interface IOrder {
 }
 
 const orderSchema = new Schema<IOrder>({
-  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  user: { type: Schema.Types.ObjectId as any, ref: 'User', required: true },
   items: [orderItemSchema],
   subtotal: { type: Number, required: true },
   tax: { type: Number, default: 0 },
@@ -54,7 +54,7 @@ const orderSchema = new Schema<IOrder>({
   },
   payment: paymentSchema,
   shippingDetails: shippingSchema,
-  vendor: { type: Schema.Types.ObjectId, ref: 'Vendor' },
+  vendor: { type: Schema.Types.ObjectId as any, ref: 'Vendor' },
   createdAt: { type: Date, default: Date.now },
 });
 

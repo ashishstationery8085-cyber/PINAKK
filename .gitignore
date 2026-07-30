@@ -11,3 +11,5 @@ dist
 build
 .next
 .vscode
+
+# Ignore env files\n/server/.env\n/deploy/.env\n/client/.env.local\n

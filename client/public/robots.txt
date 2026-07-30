@@ -1,3 +1,13 @@
 User-agent: *
 Allow: /
-Sitemap: /sitemap.xml
+Disallow: /api/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /checkout/
+Disallow: /dashboard/
+Disallow: /orders/
+
+Sitemap: https://pinakk.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1

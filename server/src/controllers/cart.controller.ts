@@ -28,7 +28,7 @@ export const updateCartItem = async (req: Request, res: Response) => {
   const { quantity } = req.body;
   const cart = await Cart.findOne({ user: userId });
   if (!cart) return res.status(404).json({ success: false, message: 'Cart not found' });
-  const item = cart.items.id(itemId);
+  const item = (cart.items as any).id(itemId);
   if (!item) return res.status(404).json({ success: false, message: 'Item not found' });
   item.quantity = Math.max(1, quantity);
   await cart.save();
@@ -40,7 +40,7 @@ export const removeFromCart = async (req: Request, res: Response) => {
   const { itemId } = req.params;
   const cart = await Cart.findOne({ user: userId });
   if (!cart) return res.status(404).json({ success: false, message: 'Cart not found' });
-  cart.items.id(itemId)?.remove();
+  (cart.items as any).id(itemId)?.remove();
   await cart.save();
   res.json({ success: true, cart });
 };
@@ -50,7 +50,7 @@ export const saveForLater = async (req: Request, res: Response) => {
   const { itemId } = req.body;
   const cart = await Cart.findOne({ user: userId });
   if (!cart) return res.status(404).json({ success: false, message: 'Cart not found' });
-  const item = cart.items.id(itemId);
+  const item = (cart.items as any).id(itemId);
   if (!item) return res.status(404).json({ success: false, message: 'Item not found' });
   item.savedForLater = true;
   await cart.save();

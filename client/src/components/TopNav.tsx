@@ -14,7 +14,22 @@ const TopNav = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setAuthenticated(!!getAuthToken());
+    const checkAuth = () => {
+      setAuthenticated(!!getAuthToken());
+    };
+    
+    checkAuth();
+    
+    // Listen for storage changes (e.g., from other tabs)
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   useEffect(() => {

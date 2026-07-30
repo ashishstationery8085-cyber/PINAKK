@@ -95,3 +95,15 @@ export const profile = async (req: Request, res: Response) => {
   const user = (req as any).user;
   res.json({ success: true, user });
 };
+
+export const refreshToken = async (req: Request, res: Response) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Token missing' });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as JwtPayload;
+    const newToken = signToken(decoded.userId, decoded.role);
+    res.json({ success: true, token: newToken });
+  } catch (error) {
+    res.status(401).json({ success: false, message: 'Invalid token' });
+  }
+};

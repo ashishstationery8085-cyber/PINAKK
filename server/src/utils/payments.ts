@@ -4,18 +4,29 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || '',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || '',
-});
+const razorpayKey = process.env.RAZORPAY_KEY || process.env.RAZORPAY_KEY_ID || '';
+const razorpaySecret = process.env.RAZORPAY_SECRET || process.env.RAZORPAY_KEY_SECRET || '';
+const stripeSecret = process.env.STRIPE_SECRET || process.env.STRIPE_SECRET_KEY || '';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2022-11-15' });
+const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: '2022-11-15' }) : null;
+
+const getRazorpay = () => {
+  if (!razorpayKey || !razorpaySecret) return null;
+  return new Razorpay({ key_id: razorpayKey, key_secret: razorpaySecret });
+};
 
 export const createRazorpayOrder = async (amount: number, currency = 'INR') => {
-  return await razorpay.orders.create({ amount: Math.round(amount * 100), currency, payment_capture: 1 });
+  const razorpay = getRazorpay();
+  if (!razorpay) {
+    throw new Error('Razorpay keys are not configured. Set RAZORPAY_KEY and RAZORPAY_SECRET.');
+  }
+  return await razorpay.orders.create({ amount: Math.round(amount * 100), currency, payment_capture: true });
 };
 
 export const createStripePaymentIntent = async (amount: number, currency = 'INR') => {
+  if (!stripe) {
+    throw new Error('Stripe secret key is not configured. Set STRIPE_SECRET.');
+  }
   return await stripe.paymentIntents.create({ amount: Math.round(amount * 100), currency });
 };
 
