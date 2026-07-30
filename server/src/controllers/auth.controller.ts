@@ -41,6 +41,22 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
+  
+  // Demo admin login (works without MongoDB)
+  if (email === 'admin@pinakk.com' && password === 'admin123') {
+    const token = signToken('demo-admin-id', 'admin');
+    return res.json({ 
+      success: true, 
+      token, 
+      user: { 
+        id: 'demo-admin-id', 
+        name: 'Admin User', 
+        email: 'admin@pinakk.com', 
+        role: 'admin' 
+      } 
+    });
+  }
+  
   const user = await User.findOne({ email });
   if (!user) return res.status(401).json({ success: false, message: 'Invalid credentials' });
   const isMatch = await bcrypt.compare(password, user.password);
