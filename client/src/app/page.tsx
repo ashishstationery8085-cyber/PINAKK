@@ -151,15 +151,15 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-3xl blur-3xl"></div>
                 <div className="relative grid grid-cols-3 gap-4">
                   {[
-                    { emoji: '🧴', rotate: '-6deg' },
-                    { emoji: '🎗️', rotate: '4deg' },
-                    { emoji: '📊', rotate: '-3deg' },
-                    { emoji: '✏️', rotate: '5deg' },
-                    { emoji: '📄', rotate: '-4deg' },
-                    { emoji: '🎁', rotate: '3deg' },
+                    { image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400', rotate: '-6deg' },
+                    { image: 'https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=400', rotate: '4deg' },
+                    { image: 'https://images.unsplash.com/photo-1531346878377-a5be20888c57?w=400', rotate: '-3deg' },
+                    { image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400', rotate: '5deg' },
+                    { image: 'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=400', rotate: '-4deg' },
+                    { image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400', rotate: '3deg' },
                   ].map((item, idx) => (
-                    <div key={idx} className={`bg-white/40 backdrop-blur-md rounded-2xl p-6 flex items-center justify-center h-32 shadow-xl transform hover:scale-110 transition duration-300`} style={{ transform: `rotate(${item.rotate})` }}>
-                      <div className="text-6xl drop-shadow-lg">{item.emoji}</div>
+                    <div key={idx} className={`bg-white/40 backdrop-blur-md rounded-2xl p-6 flex items-center justify-center h-32 shadow-xl transform hover:scale-110 transition duration-300 overflow-hidden`} style={{ transform: `rotate(${item.rotate})` }}>
+                      <img src={item.image} alt="Product" className="w-full h-full object-cover rounded-xl" />
                     </div>
                   ))}
                 </div>
@@ -210,19 +210,19 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-6">
             {[
-              { name: 'Stationery', slug: 'stationery', img: '📝', color: 'from-blue-500 to-blue-600' },
-              { name: 'Paper Products', slug: 'paper', img: '📄', color: 'from-green-500 to-green-600' },
-              { name: 'Office Supplies', slug: 'office', img: '📊', color: 'from-purple-500 to-purple-600' },
-              { name: 'Gift Items', slug: 'gifts', img: '🎁', color: 'from-pink-500 to-pink-600' },
-              { name: 'Perfumes', slug: 'perfumes', img: '🧴', color: 'from-amber-500 to-amber-600' },
-              { name: 'Belts', slug: 'belts', img: '🎗️', color: 'from-red-500 to-red-600' },
-              { name: 'General Store', slug: 'general', img: '🏪', color: 'from-cyan-500 to-cyan-600' },
-              { name: 'Accessories', slug: 'accessories', img: '👜', color: 'from-indigo-500 to-indigo-600' },
+              { name: 'Stationery', slug: 'stationery', image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400', color: 'from-blue-500 to-blue-600' },
+              { name: 'Paper Products', slug: 'paper', image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400', color: 'from-green-500 to-green-600' },
+              { name: 'Office Supplies', slug: 'office', image: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400', color: 'from-purple-500 to-purple-600' },
+              { name: 'Gift Items', slug: 'gifts', image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400', color: 'from-pink-500 to-pink-600' },
+              { name: 'Perfumes', slug: 'perfumes', image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400', color: 'from-amber-500 to-amber-600' },
+              { name: 'Belts', slug: 'belts', image: 'https://images.unsplash.com/photo-1551028919-ac66c5f8b4b8?w=400', color: 'from-red-500 to-red-600' },
+              { name: 'General Store', slug: 'general', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?w=400', color: 'from-cyan-500 to-cyan-600' },
+              { name: 'Accessories', slug: 'accessories', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400', color: 'from-indigo-500 to-indigo-600' },
             ].map((cat, idx) => (
               <Link key={idx} href={`/categories/${cat.slug}`} className="group">
                 <div className="bg-white rounded-2xl p-4 sm:p-6 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200 hover:border-orange-300">
-                  <div className={`w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br ${cat.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition duration-300`}>
-                    <span className="text-3xl sm:text-4xl">{cat.img}</span>
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br ${cat.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition duration-300 overflow-hidden`}>
+                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
                   </div>
                   <p className="text-xs sm:text-sm font-semibold text-slate-900 group-hover:text-orange-600 transition">{cat.name}</p>
                 </div>
@@ -450,15 +450,15 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
             {[
-              { emoji: '📝', color: 'from-blue-400 to-blue-500' },
-              { emoji: '🎨', color: 'from-pink-400 to-pink-500' },
-              { emoji: '✏️', color: 'from-purple-400 to-purple-500' },
-              { emoji: '📊', color: 'from-green-400 to-green-500' },
-              { emoji: '🎁', color: 'from-orange-400 to-orange-500' },
-              { emoji: '🧴', color: 'from-cyan-400 to-cyan-500' },
+              { image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400', color: 'from-blue-400 to-blue-500' },
+              { image: 'https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=400', color: 'from-pink-400 to-pink-500' },
+              { image: 'https://images.unsplash.com/photo-1531346878377-a5be20888c57?w=400', color: 'from-purple-400 to-purple-500' },
+              { image: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400', color: 'from-green-400 to-green-500' },
+              { image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400', color: 'from-orange-400 to-orange-500' },
+              { image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400', color: 'from-cyan-400 to-cyan-500' },
             ].map((item, idx) => (
-              <div key={idx} className={`aspect-square bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center text-5xl sm:text-7xl hover:scale-105 transition cursor-pointer shadow-lg hover:shadow-2xl transform hover:-translate-y-1`}>
-                {item.emoji}
+              <div key={idx} className={`aspect-square bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center hover:scale-105 transition cursor-pointer shadow-lg hover:shadow-2xl transform hover:-translate-y-1 overflow-hidden`}>
+                <img src={item.image} alt="Instagram post" className="w-full h-full object-cover" />
               </div>
             ))}
           </div>
@@ -515,13 +515,13 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {[
-              { title: 'Top 10 Stationery Essentials for Students', excerpt: 'Discover the must-have stationery items every student needs for a successful academic year.', date: 'July 10, 2024', color: 'from-blue-400 to-blue-500', icon: '📝' },
-              { title: 'How to Organize Your Office Desk', excerpt: 'Tips and tricks to create a productive and organized workspace that boosts efficiency.', date: 'July 5, 2024', color: 'from-green-400 to-green-500', icon: '📊' },
-              { title: 'Sustainable Stationery Choices', excerpt: 'Learn about eco-friendly stationery options that help reduce your environmental footprint.', date: 'June 28, 2024', color: 'from-emerald-400 to-emerald-500', icon: '🌱' },
+              { title: 'Top 10 Stationery Essentials for Students', excerpt: 'Discover the must-have stationery items every student needs for a successful academic year.', date: 'July 10, 2024', color: 'from-blue-400 to-blue-500', image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400' },
+              { title: 'How to Organize Your Office Desk', excerpt: 'Tips and tricks to create a productive and organized workspace that boosts efficiency.', date: 'July 5, 2024', color: 'from-green-400 to-green-500', image: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400' },
+              { title: 'Sustainable Stationery Choices', excerpt: 'Learn about eco-friendly stationery options that help reduce your environmental footprint.', date: 'June 28, 2024', color: 'from-emerald-400 to-emerald-500', image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400' },
             ].map((post, idx) => (
               <div key={idx} className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
-                <div className={`h-48 sm:h-56 bg-gradient-to-br ${post.color} flex items-center justify-center text-6xl sm:text-8xl relative overflow-hidden`}>
-                  <span className="transform group-hover:scale-110 transition duration-500">{post.icon}</span>
+                <div className={`h-48 sm:h-56 bg-gradient-to-br ${post.color} flex items-center justify-center relative overflow-hidden`}>
+                  <img src={post.image} alt={post.title} className="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-6">

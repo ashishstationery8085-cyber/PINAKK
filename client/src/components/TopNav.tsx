@@ -78,7 +78,6 @@ const TopNav = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3">
               <img src="/logo.png" alt="PINAKK" className="h-10 w-auto object-contain" />
-              <span className="text-2xl font-bold text-slate-900 hidden sm:inline">PINAKK</span>
             </Link>
 
             {/* Categories & Search */}
