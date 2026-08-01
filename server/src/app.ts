@@ -44,6 +44,16 @@ app.use((req, res, next) => {
     return next();
   }
 
+  // Allow demo mode for auth even without MongoDB
+  if (req.path.startsWith('/api/auth')) {
+    return next();
+  }
+
+  // Allow demo mode for admin even without MongoDB
+  if (req.path.startsWith('/api/admin')) {
+    return next();
+  }
+
   if (req.path.startsWith('/api/') && mongoose.connection.readyState !== 1) {
     return res.status(503).json({ success: false, message: 'Database unavailable. Start MongoDB and retry.' });
   }

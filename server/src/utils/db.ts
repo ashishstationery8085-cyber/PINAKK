@@ -14,11 +14,12 @@ const connectDb = async () => {
     await mongoose.connect(uri, {
       autoIndex: true,
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 10000,
-      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 15000,
+      socketTimeoutMS: 60000,
       family: 4, // Use IPv4, skip trying IPv6
       retryWrites: true,
       retryReads: true,
+      connectTimeoutMS: 15000,
     });
     console.log('✅ Connected to MongoDB successfully');
     return true;
