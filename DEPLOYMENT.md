@@ -5,9 +5,20 @@ This guide covers deploying the PINAKK Marketplace e-commerce platform to Vercel
 ## Prerequisites
 
 - Node.js 18+ installed
-- MongoDB Atlas account with a cluster
+- MongoDB Atlas account with a cluster (optional - demo mode available)
 - Vercel or Netlify account
 - Git repository (GitHub, GitLab, or Bitbucket)
+
+## Quick Start - Demo Mode (No MongoDB Required)
+
+The application can run in **demo mode** without MongoDB connection:
+- Demo products are served from memory
+- Admin login works with demo credentials
+- Perfect for testing and development
+
+**Demo Admin Credentials:**
+- Email: `admin@pinakk.com`
+- Password: `admin123`
 
 ## Environment Variables
 
