@@ -17,11 +17,13 @@ const connectDb = async () => {
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
       family: 4, // Use IPv4, skip trying IPv6
+      retryWrites: true,
+      retryReads: true,
     });
     console.log('✅ Connected to MongoDB successfully');
     return true;
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error.message);
+    console.error('❌ MongoDB connection failed:', (error as Error).message);
     console.warn('⚠️  Continuing without MongoDB. API routes that need persistent data will return 503 until a database is available.');
     return false;
   }
