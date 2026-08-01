@@ -14,11 +14,17 @@ This guide covers deploying the PINAKK Marketplace e-commerce platform to Vercel
 The application can run in **demo mode** without MongoDB connection:
 - Demo products are served from memory
 - Admin login works with demo credentials
+- Product add functionality works in demo mode
 - Perfect for testing and development
 
 **Demo Admin Credentials:**
 - Email: `admin@pinakk.com`
 - Password: `admin123`
+
+**MongoDB Credentials (for production):**
+- User: `ashishstationery8085_db_user`
+- Password: `campMjluWRgS63nm`
+- Cluster: `cluster0.r2xqgoj.mongodb.net`
 
 ## Environment Variables
 
@@ -39,8 +45,8 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.com
 Create `.env` in the `server` directory:
 
 ```env
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/?appName=Cluster0
-JWT_SECRET=your_secure_jwt_secret
+MONGO_URI=mongodb+srv://ashishstationery8085_db_user:campMjluWRgS63nm@cluster0.r2xqgoj.mongodb.net/?appName=Cluster0
+JWT_SECRET=pinakk_jwt_secret_key_2024
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
@@ -49,6 +55,7 @@ RAZORPAY_KEY_SECRET=your_razorpay_secret
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 NODE_ENV=production
+PORT=4000
 ```
 
 **Important:** For MongoDB Atlas, ensure:
