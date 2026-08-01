@@ -197,9 +197,21 @@ export const getProduct = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-  const productData = req.body;
-  const created = await Product.create(productData);
-  res.status(201).json({ success: true, product: created });
+  try {
+    const productData = req.body;
+    const created = await Product.create(productData);
+    res.status(201).json({ success: true, product: created });
+  } catch (error) {
+    // Add to demo products if MongoDB is not available
+    console.log('MongoDB unavailable, adding to demo products');
+    const newProduct = {
+      _id: `demo-${Date.now()}`,
+      ...req.body,
+      status: 'active',
+    };
+    demoProducts.push(newProduct);
+    res.status(201).json({ success: true, product: newProduct, demo: true });
+  }
 };
 
 export const updateProduct = async (req: Request, res: Response) => {

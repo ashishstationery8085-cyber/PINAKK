@@ -14,13 +14,15 @@ const connectDb = async () => {
     await mongoose.connect(uri, {
       autoIndex: true,
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      family: 4, // Use IPv4, skip trying IPv6
     });
-    console.log('Connected to MongoDB');
+    console.log('✅ Connected to MongoDB successfully');
     return true;
   } catch (error) {
-    console.error('MongoDB connection failed:', error);
-    console.warn('Continuing without MongoDB. API routes that need persistent data will return 503 until a database is available.');
+    console.error('❌ MongoDB connection failed:', error.message);
+    console.warn('⚠️  Continuing without MongoDB. API routes that need persistent data will return 503 until a database is available.');
     return false;
   }
 };
