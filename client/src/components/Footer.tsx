@@ -180,7 +180,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="mt-8 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400">
-          <p>© 2024 PINAKK - Powered by Ashish Stationary & Photocopy</p>
+          <p>© 2024 PINAKK - Powered by Ashish Stationary & Photocopy | Design & Managed By DevaCore Studios</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-white transition">Terms of Service</Link>
