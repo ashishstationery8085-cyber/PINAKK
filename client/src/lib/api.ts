@@ -8,12 +8,15 @@ const api = axios.create({
   withCredentials: true,
 });
 
+console.log('API baseURL:', api.defaults.baseURL);
+
 // Error handling interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     const errorMessage = error?.response?.data?.message || 'An error occurred';
     console.error('API Error:', errorMessage);
+    console.error('Full error:', error);
     return Promise.reject(error);
   }
 );
