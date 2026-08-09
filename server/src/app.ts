@@ -17,10 +17,11 @@ import errorHandler from './middleware/error.middleware';
 
 const app = express();
 
-app.use(helmet({
-  contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false,
-}));
+// Temporarily disable helmet for debugging
+// app.use(helmet({
+//   contentSecurityPolicy: false,
+//   crossOriginEmbedderPolicy: false,
+// }));
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'http://127.0.0.1:3000'];
 app.use(cors({ 
   origin: function(origin, callback) {
