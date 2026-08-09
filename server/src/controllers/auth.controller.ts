@@ -27,7 +27,7 @@ export const register = async (req: Request, res: Response) => {
     where: {
       OR: [
         { email },
-        { mobile }
+        ...(mobile ? [{ mobile }] : [])
       ]
     }
   });
@@ -37,10 +37,10 @@ export const register = async (req: Request, res: Response) => {
     data: {
       name,
       email,
-      mobile,
+      mobile: mobile || null,
       password: hashedPassword,
       referralCode,
-      referredBy,
+      referredBy: referredBy || null,
     }
   });
 
