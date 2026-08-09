@@ -1,33 +1,19 @@
-import mongoose from 'mongoose';
+import { PrismaClient } from '@prisma/client';
 
-export const isDbConnected = () => mongoose.connection.readyState === 1;
+const prisma = new PrismaClient();
 
-const connectDb = async () => {
-  const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/pinakk';
-  if (!process.env.MONGO_URI) {
-    console.warn('MONGO_URI is not set. Falling back to local MongoDB at mongodb://localhost:27017/pinakk');
-  } else {
-    console.log('Connecting to MongoDB with URI:', uri.startsWith('mongodb+srv://') ? 'mongodb+srv://[REDACTED]' : uri);
-  }
+export const isDbConnected = () => prisma.$isConnected;
 
+export const connectDb = async (): Promise<boolean> => {
   try {
-    await mongoose.connect(uri, {
-      autoIndex: true,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 15000,
-      socketTimeoutMS: 60000,
-      family: 4, // Use IPv4, skip trying IPv6
-      retryWrites: true,
-      retryReads: true,
-      connectTimeoutMS: 15000,
-    });
-    console.log('✅ Connected to MongoDB successfully');
+    await prisma.$connect();
+    console.log('✅ Connected to MySQL database successfully');
     return true;
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', (error as Error).message);
-    console.warn('⚠️  Continuing without MongoDB. API routes that need persistent data will return 503 until a database is available.');
-    return false;
+    console.error('❌ MySQL connection failed:', (error as Error).message);
+    console.error('❌ MySQL connection is REQUIRED for production. Server cannot start without database.');
+    process.exit(1);
   }
 };
 
-export default connectDb;
+export default prisma;

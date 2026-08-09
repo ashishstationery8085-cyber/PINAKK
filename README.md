@@ -1,6 +1,6 @@
 # PINAKK Marketplace
 
-**PINAKK** is a modern enterprise-grade, mobile-first commerce marketplace built with Next.js, React, TypeScript, Tailwind CSS, Node.js, Express, and MongoDB.
+**PINAKK** is a modern enterprise-grade, mobile-first commerce marketplace built with Next.js, React, TypeScript, Tailwind CSS, Node.js, Express, and MySQL with Prisma ORM.
 
 ## Brand
 - Name: PINAKK
@@ -20,21 +20,65 @@
 
 ## Folder Structure
 - `client/` — Frontend Next.js application
-- `server/` — Backend Express API with MongoDB
+- `server/` — Backend Express API with MySQL and Prisma ORM
 - `docker-compose.yml` — Local development and production containers
 - `.env.example` — Environment variables sample
+- `server/prisma/` — Prisma schema and migrations
+- `server/MYSQL_SETUP_GUIDE.md` — Detailed MySQL setup instructions
 
 ## Installation
-1. Clone the repository.
-2. Create `.env` for server and `client/.env.local` for frontend.
-3. Run `docker compose up --build`.
-4. Open frontend at `http://localhost:3000` and API at `http://localhost:4000`.
+
+### Prerequisites
+- Node.js 18+ 
+- MySQL database (local or cloud - see `server/MYSQL_SETUP_GUIDE.md`)
+- npm or yarn
+
+### Quick Start (Local Development)
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   # Server
+   cd server
+   npm install
+   
+   # Client
+   cd ../client
+   npm install
+   ```
+
+3. Set up MySQL database:
+   - Follow instructions in `server/MYSQL_SETUP_GUIDE.md`
+   - Recommended: Use PlanetScale (free tier) or Railway
+   - Update `server/.env` with your `DATABASE_URL`
+
+4. Run database migrations:
+   ```bash
+   cd server
+   npm run prisma:migrate
+   ```
+
+5. Seed database with demo data:
+   ```bash
+   npm run seed
+   ```
+
+6. Start development servers:
+   ```bash
+   # Server (in server directory)
+   npm run dev
+   
+   # Client (in client directory)
+   npm run dev
+   ```
+
+7. Open frontend at `http://localhost:3000` and API at `http://localhost:4001`
 
 ### Environment Variables
 
 **Server (.env):**
 ```env
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/?appName=Cluster0
+DATABASE_URL=mysql://user:password@host:port/database
 JWT_SECRET=your_secure_jwt_secret
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
@@ -43,12 +87,13 @@ RAZORPAY_KEY_ID=your_razorpay_key
 RAZORPAY_KEY_SECRET=your_razorpay_secret
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
-NODE_ENV=production
+NODE_ENV=development
+PORT=4001
 ```
 
 **Client (.env.local):**
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:4000/api
+NEXT_PUBLIC_API_URL=http://localhost:4001/api
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_key
 NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id
 NEXT_PUBLIC_CLOUDINARY_BASE=https://res.cloudinary.com/your-cloud-name/image/upload
@@ -65,10 +110,18 @@ npm run seed
 ```
 
 This will create:
-- 16 categories (Stationery, Notebooks, Pens, Art Supplies, etc.)
-- 140+ demo products with images, descriptions, and variants
+- 2 users (1 admin, 1 regular user)
+- 6 categories (Notebooks, Pens, Art Supplies, Desk Essentials, Sketchbooks, Stationery Sets)
+- 1 brand (PINAKK)
+- 10 products with images, descriptions, and variants
+- 2 product variants
+- 2 coupons (WELCOME10, FLAT50)
+- 2 banners
+- 3 settings
 
-**Note:** Ensure your MongoDB Atlas IP is whitelisted before running the seed script.
+**Demo Login Credentials:**
+- Admin: admin@pinakk.com / admin123
+- User: user@pinakk.com / user123
 
 ## Features Included
 - Authentication: email/password, mobile OTP, social login hooks, JWT, RBAC
@@ -85,6 +138,8 @@ This will create:
 ```powershell
 cd server
 npm install
+npm run prisma:migrate
+npm run seed
 npm run dev
 ```
 
@@ -95,6 +150,15 @@ npm install
 npm run dev
 ```
 
+### Database Commands
+```powershell
+cd server
+npm run prisma:generate    # Generate Prisma client
+npm run prisma:migrate     # Run database migrations
+npm run prisma:studio      # Open Prisma Studio (GUI)
+npm run seed               # Seed database with demo data
+```
+
 ### Deployment with Docker
 ```powershell
 docker compose up --build
@@ -102,8 +166,9 @@ docker compose up --build
 
 ## Documentation
 - `API_DOCUMENTATION.md` — Full backend endpoint reference
+- `server/MYSQL_SETUP_GUIDE.md` — MySQL database setup instructions
 - `INSTALLATION_GUIDE.md` — Local setup, Docker, and production deployment instructions
-- `DEPLOYMENT.md` — Vercel/Netlify deployment guide with MongoDB Atlas setup
+- `DEPLOYMENT.md` — Vercel/Netlify deployment guide
 
 ## API Documentation
 See `server/src/routes` and `server/src/controllers` for route definitions.
@@ -122,15 +187,16 @@ See `server/src/routes` and `server/src/controllers` for route definitions.
 - `POST /api/vendors/register`
 
 ## Production Notes
-- Use managed MongoDB Atlas or self-hosted MongoDB
+- Use managed MySQL database (PlanetScale, Railway, Neon, or self-hosted MySQL)
 - Configure Cloudinary API keys for image storage
 - Integrate Razorpay, Stripe, Paytm, PhonePe via env variables
 - Use HTTPS, a CDN, and a static asset host for frontend
-- Set `NEXT_PUBLIC_API_URL` and server `MONGO_URI` before launch
+- Set `NEXT_PUBLIC_API_URL` and server `DATABASE_URL` before launch
 - The frontend now ships with SEO-ready metadata, sitemap, robots rules, and a polished home/catalog experience for deployment
 
 Deployment with Docker (recommended)
 - Copy `.env.production.example` to `.env` (or create `server/.env` and `client/.env.production`) and fill values.
+- Set up MySQL database (see `server/MYSQL_SETUP_GUIDE.md`)
 - Build and run with Docker Compose (multi-stage Dockerfiles produce lean production images):
 
 ```powershell
@@ -138,7 +204,7 @@ docker compose up --build -d
 ```
 
 Notes:
-- Ensure `NEXT_PUBLIC_API_URL` points to the server service (for docker-compose use `http://server:4000/api`).
+- Ensure `NEXT_PUBLIC_API_URL` points to the server service (for docker-compose use `http://server:4001/api`).
 - For Stripe webhooks in production, configure your webhook endpoint in the Stripe dashboard to `https://your-domain.com/api/payments/stripe/webhook` and set `STRIPE_WEBHOOK_SECRET`.
 - Keep secrets out of version control; use a secrets manager for production values.
 
@@ -188,7 +254,7 @@ server {
 	}
 
 	location /api/ {
-		proxy_pass http://127.0.0.1:4000/api/;
+		proxy_pass http://127.0.0.1:4001/api/;
 		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

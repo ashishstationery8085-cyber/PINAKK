@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import payments from '../utils/payments';
 import crypto from 'crypto';
-import Order from '../models/order.model';
+import { prisma } from '../lib/prisma';
 import Stripe from 'stripe';
 
 export const createRazorpayCheckout = async (req: Request, res: Response) => {
@@ -35,16 +35,30 @@ export const verifyRazorpayPayment = async (req: Request, res: Response) => {
     }
 
     // Find the application order linked to this razorpay order id
-    const order = await Order.findOne({ 'payment.transactionId': razorpay_order_id });
+    const order = await prisma.order.findFirst({
+      where: {
+        payment: {
+          transactionId: razorpay_order_id,
+        },
+      },
+    });
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    order.status = 'paid';
-    order.payment.status = 'paid';
-    order.payment.transactionId = razorpay_payment_id;
-    order.payment.gatewayResponse = { razorpay_order_id, razorpay_payment_id, razorpay_signature };
-    await order.save();
+    await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        status: 'paid',
+        payment: {
+          update: {
+            status: 'paid',
+            transactionId: razorpay_payment_id,
+            gatewayResponse: { razorpay_order_id, razorpay_payment_id, razorpay_signature },
+          },
+        },
+      },
+    });
 
     return res.json({ success: true, order });
   } catch (err: any) {
@@ -71,12 +85,26 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
     if (event.type === 'payment_intent.succeeded') {
       const pi = event.data.object as Stripe.PaymentIntent;
-      const order = await Order.findOne({ 'payment.transactionId': pi.id });
+      const order = await prisma.order.findFirst({
+        where: {
+          payment: {
+            transactionId: pi.id,
+          },
+        },
+      });
       if (order) {
-        order.status = 'paid';
-        order.payment.status = 'paid';
-        order.payment.gatewayResponse = pi;
-        await order.save();
+        await prisma.order.update({
+          where: { id: order.id },
+          data: {
+            status: 'paid',
+            payment: {
+              update: {
+                status: 'paid',
+                gatewayResponse: pi,
+              },
+            },
+          },
+        });
       }
     }
 

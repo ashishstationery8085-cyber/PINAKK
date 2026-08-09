@@ -13,15 +13,18 @@ import orderRoutes from './routes/order.routes';
 import adminRoutes from './routes/admin.routes';
 import vendorRoutes from './routes/vendor.routes';
 import paymentRoutes from './routes/payment.routes';
-import mongoose from 'mongoose';
 import errorHandler from './middleware/error.middleware';
-import { seedDemoData } from './utils/seedDemoData';
 
 const app = express();
 
 app.use(helmet());
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'http://127.0.0.1:3000'];
+app.use(cors({ 
+  origin: allowedOrigins, 
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
@@ -31,43 +34,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'pinakk-server', database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
-});
-
-app.use((req, res, next) => {
-  if (req.path === '/' || req.path === '/health' || req.path === '/seed-demo') {
-    return next();
-  }
-
-  // Allow demo mode for products even without MongoDB
-  if (req.path.startsWith('/api/products')) {
-    return next();
-  }
-
-  // Allow demo mode for auth even without MongoDB
-  if (req.path.startsWith('/api/auth')) {
-    return next();
-  }
-
-  // Allow demo mode for admin even without MongoDB
-  if (req.path.startsWith('/api/admin')) {
-    return next();
-  }
-
-  if (req.path.startsWith('/api/') && mongoose.connection.readyState !== 1) {
-    return res.status(503).json({ success: false, message: 'Database unavailable. Start MongoDB and retry.' });
-  }
-
-  return next();
-});
-
-app.post('/seed-demo', async (req, res) => {
-  try {
-    const result = await seedDemoData();
-    res.json({ success: true, ...result });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
-  }
+  res.json({ status: 'ok', service: 'pinakk-server', database: 'connected' });
 });
 
 app.use('/api/auth', authRoutes);

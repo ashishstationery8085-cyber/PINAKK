@@ -4,7 +4,7 @@ import { dashboardMetrics, manageUsers, manageOrders, manageProducts } from '../
 
 const router = Router();
 
-router.use(authenticate, authorize(['admin']));
+router.use(authenticate, authorize(['ADMIN']));
 router.get('/dashboard', dashboardMetrics);
 router.get('/users', manageUsers);
 router.get('/orders', manageOrders);

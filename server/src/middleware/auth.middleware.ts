@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import User from '../models/user.model';
+import prisma from '../lib/prisma';
 
 interface JwtPayload {
   userId: string;
@@ -18,19 +18,10 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   try {
     const secret = process.env.JWT_SECRET || 'secret';
     const payload = jwt.verify(token, secret) as JwtPayload;
-    
-    // Demo mode fallback for admin
-    if (payload.userId === 'demo-admin-id') {
-      req.user = {
-        id: 'demo-admin-id',
-        name: 'Admin User',
-        email: 'admin@pinakk.com',
-        role: 'admin'
-      };
-      return next();
-    }
-    
-    const user = await User.findById(payload.userId).select('-password');
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { id: true, name: true, email: true, mobile: true, role: true }
+    });
     if (!user) return res.status(401).json({ success: false, message: 'Invalid token' });
     req.user = user;
     next();

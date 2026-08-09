@@ -11,15 +11,23 @@ This guide covers deploying the PINAKK Marketplace e-commerce platform to Vercel
 
 ## Quick Start - Demo Mode (No MongoDB Required)
 
-The application can run in **demo mode** without MongoDB connection:
-- Demo products are served from memory
+The application is currently running in **demo mode** without MongoDB connection:
+- Demo products are served from memory (10 products)
 - Admin login works with demo credentials
 - Product add functionality works in demo mode
 - Perfect for testing and development
+- Ready for deployment without database configuration
 
 **Demo Admin Credentials:**
 - Email: `admin@pinakk.com`
 - Password: `admin123`
+
+**Current Status:**
+- ✅ Server running on port 4000 (demo mode)
+- ✅ Frontend running on port 3000
+- ✅ Login functionality working
+- ✅ Product listing working
+- ✅ Ready for deployment
 
 **MongoDB Credentials (for production):**
 - User: `ashishstationery8085_db_user`

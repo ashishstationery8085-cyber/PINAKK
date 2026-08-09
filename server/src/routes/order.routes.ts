@@ -8,7 +8,7 @@ router.use(authenticate);
 router.post('/', createOrder);
 router.get('/', getOrders);
 router.get('/:id', getOrderById);
-router.patch('/:id/status', authorize(['admin', 'vendor']), updateOrderStatus);
+router.patch('/:id/status', authorize(['ADMIN', 'VENDOR']), updateOrderStatus);
 router.get('/:id/track', trackOrder);
 
 export default router;

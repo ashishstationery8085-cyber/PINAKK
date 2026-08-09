@@ -1,28 +1,70 @@
 import { Request, Response } from 'express';
-import Product from '../models/product.model';
+import { prisma } from '../lib/prisma';
 
 export const searchSuggestions = async (req: Request, res: Response) => {
-  const { q } = req.query;
-  if (!q || typeof q !== 'string') return res.json({ success: true, suggestions: [] });
+  try {
+    const { q } = req.query;
+    if (!q || typeof q !== 'string') return res.json({ success: true, suggestions: [] });
 
-  const suggestions = await Product.find({ $text: { $search: q } })
-    .limit(12)
-    .select('name brand category slug')
-    .lean();
+    const suggestions = await prisma.product.findMany({
+      where: {
+        OR: [
+          { name: { contains: q, mode: 'insensitive' } },
+          { brand: { contains: q, mode: 'insensitive' } },
+        ],
+        status: 'active',
+      },
+      take: 12,
+      select: {
+        id: true,
+        name: true,
+        brand: true,
+        slug: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
 
-  res.json({ success: true, suggestions });
+    res.json({ success: true, suggestions });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching search suggestions' });
+  }
 };
 
 export const smartSearch = async (req: Request, res: Response) => {
-  const { q, category, brand, minPrice, maxPrice } = req.query;
-  const filters: any = { status: 'active' };
+  try {
+    const { q, category, brand, minPrice, maxPrice } = req.query;
+    const where: any = { status: 'active' };
 
-  if (q) filters.$text = { $search: q };
-  if (category) filters.category = category;
-  if (brand) filters.brand = brand;
-  if (minPrice) filters.price = { ...filters.price, $gte: Number(minPrice) };
-  if (maxPrice) filters.price = { ...filters.price, $lte: Number(maxPrice) };
+    if (q) {
+      where.OR = [
+        { name: { contains: q as string, mode: 'insensitive' } },
+        { description: { contains: q as string, mode: 'insensitive' } },
+        { brand: { contains: q as string, mode: 'insensitive' } },
+      ];
+    }
+    if (category) where.categoryId = category;
+    if (brand) where.brand = brand;
+    if (minPrice || maxPrice) {
+      where.price = {};
+      if (minPrice) where.price.gte = Number(minPrice);
+      if (maxPrice) where.price.lte = Number(maxPrice);
+    }
 
-  const products = await Product.find(filters).limit(60).sort({ createdAt: -1 });
-  res.json({ success: true, products });
+    const products = await prisma.product.findMany({
+      where,
+      take: 60,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        category: true,
+      },
+    });
+    res.json({ success: true, products });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error performing search' });
+  }
 };
