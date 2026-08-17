@@ -49,12 +49,13 @@ export const verifyRazorpayPayment = async (req: Request, res: Response) => {
     await prisma.order.update({
       where: { id: order.id },
       data: {
-        status: 'paid',
+        status: 'CONFIRMED',
+        paymentStatus: 'COMPLETED',
         payment: {
           update: {
-            status: 'paid',
+            status: 'COMPLETED',
             transactionId: razorpay_payment_id,
-            gatewayResponse: { razorpay_order_id, razorpay_payment_id, razorpay_signature },
+            paymentData: { razorpay_order_id, razorpay_payment_id, razorpay_signature },
           },
         },
       },
@@ -96,11 +97,12 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         await prisma.order.update({
           where: { id: order.id },
           data: {
-            status: 'paid',
+            status: 'CONFIRMED',
+            paymentStatus: 'COMPLETED',
             payment: {
               update: {
-                status: 'paid',
-                gatewayResponse: pi,
+                status: 'COMPLETED',
+                paymentData: JSON.parse(JSON.stringify(pi)),
               },
             },
           },

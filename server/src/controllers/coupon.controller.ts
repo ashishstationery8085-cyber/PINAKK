@@ -41,13 +41,13 @@ export const validateCoupon = async (req: Request, res: Response) => {
     const coupon = await prisma.coupon.findFirst({
       where: {
         code: code.toUpperCase(),
-        active: true,
+        isActive: true,
       },
     });
     if (!coupon) return res.status(404).json({ success: false, message: 'Coupon not found' });
     
     const now = new Date();
-    if (coupon.startDate > now || coupon.expiryDate < now) {
+    if (coupon.startDate > now || coupon.endDate < now) {
       return res.status(400).json({ success: false, message: 'Coupon is expired or not active' });
     }
     
@@ -55,16 +55,16 @@ export const validateCoupon = async (req: Request, res: Response) => {
       where: { couponId: coupon.id },
     });
     
-    if (usageCount >= coupon.usageLimit) {
+    if (coupon.usageLimit !== null && usageCount >= coupon.usageLimit) {
       return res.status(400).json({ success: false, message: 'Coupon usage limit reached' });
     }
     
-    if (cartTotal < coupon.minimumOrderValue) {
+    if (cartTotal < coupon.minimumOrder) {
       return res.status(400).json({ success: false, message: 'Minimum order value not met' });
     }
     
-    const discount = coupon.discountType === 'flat' 
-      ? coupon.discountValue 
+    const discount = coupon.discountType === 'FIXED'
+      ? coupon.discountValue
       : (cartTotal * coupon.discountValue) / 100;
     
     res.json({ success: true, coupon, discount });

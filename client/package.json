@@ -3,35 +3,27 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "axios": "^1.5.1",
-    "cloudinary": "^2.10.0",
-    "cors": "^2.8.6",
-    "critters": "^0.0.23",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "mongoose": "^9.7.2",
     "next": "14.2.5",
-    "razorpay": "^2.9.6",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-icons": "^4.11.0",
-    "socket.io": "^4.8.3",
     "swr": "^2.3.1"
   },
   "devDependencies": {
-    "@types/react": "19.2.17",
+    "@types/node": "26.2.0",
+    "@types/react": "18.3.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.5",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.2"
   }
 }

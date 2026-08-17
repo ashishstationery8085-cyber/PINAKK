@@ -9,10 +9,11 @@ export const searchSuggestions = async (req: Request, res: Response) => {
     const suggestions = await prisma.product.findMany({
       where: {
         OR: [
-          { name: { contains: q, mode: 'insensitive' } },
-          { brand: { contains: q, mode: 'insensitive' } },
+          { name: { contains: q } },
+          { description: { contains: q } },
+          { brand: { is: { name: { contains: q } } } },
         ],
-        status: 'active',
+        isActive: true,
       },
       take: 12,
       select: {
@@ -38,7 +39,7 @@ export const searchSuggestions = async (req: Request, res: Response) => {
 export const smartSearch = async (req: Request, res: Response) => {
   try {
     const { q, category, brand, minPrice, maxPrice } = req.query;
-    const where: any = { status: 'active' };
+    const where: any = { isActive: true };
 
     if (q) {
       where.OR = [
@@ -47,8 +48,8 @@ export const smartSearch = async (req: Request, res: Response) => {
         { brand: { contains: q as string, mode: 'insensitive' } },
       ];
     }
-    if (category) where.categoryId = category;
-    if (brand) where.brand = brand;
+    if (category) where.categoryId = category as string;
+    if (brand) where.brandId = brand as string;
     if (minPrice || maxPrice) {
       where.price = {};
       if (minPrice) where.price.gte = Number(minPrice);

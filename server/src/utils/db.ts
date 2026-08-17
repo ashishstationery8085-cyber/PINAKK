@@ -2,7 +2,15 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const isDbConnected = () => prisma.$isConnected;
+export const isDbConnected = async (): Promise<boolean> => {
+  try {
+    await prisma.$connect();
+    await prisma.$disconnect();
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 export const connectDb = async (): Promise<boolean> => {
   try {

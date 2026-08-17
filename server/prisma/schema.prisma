@@ -30,6 +30,7 @@ model User {
   orders            Order[]
   reviews           Review[]
   couponUsage       CouponUsage[]
+  vendor            Vendor?
   
   @@index([email])
   @@index([mobile])
@@ -105,6 +106,7 @@ model Product {
   slug             String          @unique
   sku              String          @unique
   brandId          String?
+  vendorId         String?
   categoryId       String
   subcategoryId    String?
   description      String
@@ -125,6 +127,7 @@ model Product {
   updatedAt        DateTime        @updatedAt
   
   brand            Brand?          @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  vendor           Vendor?         @relation(fields: [vendorId], references: [id], onDelete: SetNull)
   category         Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   subcategory      Category?       @relation("ProductSubcategory", fields: [subcategoryId], references: [id], onDelete: SetNull)
   variants         ProductVariant[]
@@ -139,10 +142,29 @@ model Product {
   @@index([sku])
   @@index([categoryId])
   @@index([brandId])
+  @@index([vendorId])
   @@index([isActive])
   @@index([isFeatured])
   @@index([isBestSeller])
   @@index([isNewArrival])
+}
+
+model Vendor {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  storeName     String
+  payoutAccount String?
+  earnings      Float    @default(0)
+  verified      Boolean  @default(false)
+  status        String?  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products      Product[]
+  orders        Order[]
+
+  @@index([userId])
 }
 
 // Product variant model
@@ -255,11 +277,14 @@ model Order {
   updatedAt       DateTime    @updatedAt
   
   user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendor          Vendor?     @relation(fields: [vendorId], references: [id], onDelete: SetNull)
   items           OrderItem[]
   payment         Payment?
-  
+
+  vendorId        String?
+
   @@index([userId])
-  @@index([orderNumber])
+  @@index([vendorId])
   @@index([status])
   @@index([paymentStatus])
 }
