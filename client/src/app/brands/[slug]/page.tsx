@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FiGrid, FiList, FiFilter, FiStar, FiShoppingCart } from 'react-icons/fi';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 const brandInfo: Record<string, { name: string; description: string; logo: string; founded: string; country: string }> = {
   'classmate': {

@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { authHeaders } from '../../../lib/auth';
 import { FiHeart, FiShare2, FiStar, FiTruck, FiRefreshCw, FiShield, FiCheckCircle, FiMinus, FiPlus, FiZoomIn } from 'react-icons/fi';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 const ProductDetailsPage = () => {
   const { id } = useParams();

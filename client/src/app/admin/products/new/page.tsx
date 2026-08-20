@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authHeaders, getAuthToken } from '../../../../lib/auth';
 import { FiArrowLeft, FiUpload, FiX, FiPlus, FiTrash2, FiSave } from 'react-icons/fi';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 const NewProductPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [categories, setCategories] = useState<any[]>([]);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -32,11 +33,22 @@ const NewProductPage = () => {
   const [tagInput, setTagInput] = useState('');
   const [variantInput, setVariantInput] = useState({ type: '', value: '', price: '' });
 
-  const categories = [
-    'Notebooks', 'Pens', 'Pencils', 'Erasers', 'Sharpeners',
-    'Geometry Box', 'Art Supplies', 'Files & Folders', 'Diaries',
-    'Calculator', 'School Bags', 'Water Bottles', 'Craft Supplies'
-  ];
+  // Fetch categories from API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const headers = authHeaders();
+        const response = await fetch(`${API_BASE}/categories`, { headers });
+        const data = await response.json();
+        if (data.success && Array.isArray(data.categories)) {
+          setCategories(data.categories);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const brands = [
     'Classmate', 'Navneet', 'Camlin', 'Apsara', 'Reynolds',
@@ -113,7 +125,30 @@ const NewProductPage = () => {
     setMessage('');
 
     if (!getAuthToken()) {
+      setMessage('Session expired. Please login again.');
       router.push('/auth/login');
+      return;
+    }
+
+    // Validation
+    if (!formData.name.trim()) {
+      setMessage('Product name is required');
+      setLoading(false);
+      return;
+    }
+    if (!formData.category) {
+      setMessage('Please select a category');
+      setLoading(false);
+      return;
+    }
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      setMessage('Price must be greater than 0');
+      setLoading(false);
+      return;
+    }
+    if (!formData.stock || parseInt(formData.stock) < 0) {
+      setMessage('Stock must be 0 or more');
+      setLoading(false);
       return;
     }
 
@@ -131,6 +166,8 @@ const NewProductPage = () => {
         stock: parseInt(formData.stock),
       };
 
+      console.log('Submitting payload:', payload);
+
       const response = await fetch(`${API_BASE}/admin/products`, {
         method: 'POST',
         headers: requestHeaders,
@@ -138,16 +175,17 @@ const NewProductPage = () => {
       });
 
       const data = await response.json();
+      console.log('API Response:', data);
 
       if (data.success) {
-        setMessage('Product created successfully!');
+        setMessage('✅ Product created successfully!');
         setTimeout(() => router.push('/admin/products'), 2000);
       } else {
-        setMessage(data.message || 'Failed to create product');
+        setMessage(`❌ ${data.message || 'Failed to create product'}`);
       }
-    } catch (error) {
-      setMessage('Error creating product');
-      console.error('Error:', error);
+    } catch (error: any) {
+      console.error('Error creating product:', error);
+      setMessage(`❌ Error: ${error?.message || 'Failed to connect to server'}`);
     } finally {
       setLoading(false);
     }
@@ -215,20 +253,19 @@ const NewProductPage = () => {
                 >
                   <option value="">Select category</option>
                   {categories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat.id} value={cat.name}>{cat.name}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Brand *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Brand</label>
                 <select
                   name="brand"
                   value={formData.brand}
                   onChange={handleChange}
-                  required
                   className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-secondary"
                 >
-                  <option value="">Select brand</option>
+                  <option value="">Select brand (optional)</option>
                   {brands.map((brand) => (
                     <option key={brand} value={brand}>{brand}</option>
                   ))}
@@ -490,8 +527,10 @@ const NewProductPage = () => {
           </div>
 
           {message && (
-            <div className={`mt-4 p-4 rounded-lg text-center ${
-              message.includes('success') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+            <div className={`mt-6 p-6 rounded-lg border-l-4 font-semibold text-lg ${
+              message.includes('✅') 
+                ? 'bg-green-50 border-green-400 text-green-700' 
+                : 'bg-red-50 border-red-400 text-red-700'
             }`}>
               {message}
             </div>

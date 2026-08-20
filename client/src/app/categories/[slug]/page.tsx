@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import ProductCard from '../../../components/ProductCard';
 import SearchBar from '../../../components/SearchBar';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 const CategoryPage = () => {
   const { slug } = useParams();

@@ -19,7 +19,7 @@ const createReferralCode = () => {
 };
 
 export const register = async (req: Request, res: Response) => {
-  const { name, email, mobile, password, referredBy } = req.body;
+  const { name, email, mobile, password, referredBy, role } = req.body;
   const hashedPassword = await bcrypt.hash(password, 12);
   const referralCode = createReferralCode();
 
@@ -41,11 +41,36 @@ export const register = async (req: Request, res: Response) => {
       password: hashedPassword,
       referralCode,
       referredBy: referredBy || null,
+      role: role || 'USER',
     }
   });
 
+  // If registering as delivery boy, create delivery boy profile
+  if (role === 'DELIVERY_BOY') {
+    await prisma.deliveryBoy.create({
+      data: {
+        userId: user.id,
+        vehicleType: 'bike',
+        isActive: true,
+        isAvailable: true,
+      }
+    });
+  }
+
+  // If registering as vendor, create vendor profile
+  if (role === 'VENDOR') {
+    await prisma.vendor.create({
+      data: {
+        userId: user.id,
+        storeName: `${name}'s Store`,
+        verified: false,
+        status: 'pending',
+      }
+    });
+  }
+
   const token = signToken(user.id, user.role);
-  res.status(201).json({ success: true, token, user: { id: user.id, name: user.name, email: user.email } });
+  res.status(201).json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
 };
 
 export const login = async (req: Request, res: Response) => {

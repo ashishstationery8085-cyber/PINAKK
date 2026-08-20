@@ -6,7 +6,7 @@ import { authHeaders, getAuthToken } from '../../../lib/auth';
 import { useRouter } from 'next/navigation';
 import { FiSearch, FiPlus, FiEdit, FiTrash2, FiEye, FiFilter, FiDownload, FiArrowRight, FiGrid, FiList } from 'react-icons/fi';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 const AdminProductsPage = () => {
   const router = useRouter();

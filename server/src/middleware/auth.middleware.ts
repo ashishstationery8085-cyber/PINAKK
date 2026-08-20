@@ -31,7 +31,10 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 };
 
 export const authorize = (roles: string[]) => (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (!req.user || !roles.includes(req.user.role)) {
+  const allowedRoles = roles.map((role) => role.toLowerCase());
+  const userRole = req.user?.role?.toLowerCase?.() ?? '';
+
+  if (!req.user || !allowedRoles.includes(userRole)) {
     return res.status(403).json({ success: false, message: 'Forbidden' });
   }
   next();

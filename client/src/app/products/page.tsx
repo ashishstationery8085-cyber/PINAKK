@@ -7,7 +7,7 @@ import ProductCard from '../../components/ProductCard';
 import SearchBar from '../../components/SearchBar';
 import { FiGrid, FiList, FiFilter, FiX, FiHeart, FiShoppingCart, FiArrowUp, FiArrowDown, FiStar } from 'react-icons/fi';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 const categories = [
   'Stationery', 'Paper Products', 'Office Supplies', 'Gift Items', 

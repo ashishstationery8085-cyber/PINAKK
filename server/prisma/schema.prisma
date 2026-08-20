@@ -31,6 +31,7 @@ model User {
   reviews           Review[]
   couponUsage       CouponUsage[]
   vendor            Vendor?
+  deliveryBoy       DeliveryBoy?
   
   @@index([email])
   @@index([mobile])
@@ -40,6 +41,7 @@ enum Role {
   USER
   ADMIN
   VENDOR
+  DELIVERY_BOY
 }
 
 // Address model
@@ -276,15 +278,18 @@ model Order {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vendor          Vendor?     @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendor          Vendor?      @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  deliveryBoy     DeliveryBoy? @relation(fields: [deliveryBoyId], references: [id], onDelete: SetNull)
   items           OrderItem[]
   payment         Payment?
 
   vendorId        String?
+  deliveryBoyId   String?
 
   @@index([userId])
   @@index([vendorId])
+  @@index([deliveryBoyId])
   @@index([status])
   @@index([paymentStatus])
 }
@@ -452,4 +457,45 @@ model Settings {
   updatedAt DateTime @updatedAt
   
   @@index([key])
+}
+
+// Delivery Boy model
+model DeliveryBoy {
+  id              String            @id @default(cuid())
+  userId          String            @unique
+  vehicleType     String?           // bike, car, bicycle, van
+  vehicleNumber   String?
+  licenseNumber   String?
+  isActive        Boolean           @default(true)
+  isAvailable     Boolean           @default(true)
+  rating          Float             @default(0)
+  totalDeliveries Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders          Order[]
+  locations       DeliveryLocation[]
+  
+  @@index([userId])
+  @@index([isActive])
+  @@index([isAvailable])
+}
+
+// Delivery Location model - tracks live location of delivery boy
+model DeliveryLocation {
+  id              String      @id @default(cuid())
+  deliveryBoyId   String
+  orderId         String?
+  latitude        Float
+  longitude       Float
+  address         String?
+  timestamp       DateTime    @default(now())
+  createdAt       DateTime    @default(now())
+  
+  deliveryBoy     DeliveryBoy @relation(fields: [deliveryBoyId], references: [id], onDelete: Cascade)
+  
+  @@index([deliveryBoyId])
+  @@index([orderId])
+  @@index([timestamp])
 }

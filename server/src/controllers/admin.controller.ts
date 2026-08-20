@@ -11,6 +11,28 @@ export const dashboardMetrics = async (_req: Request, res: Response) => {
       where: { role: 'USER' },
     });
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayOrders = await prisma.order.count({
+      where: {
+        createdAt: {
+          gte: today
+        }
+      }
+    });
+
+    const todayRevenue = (await prisma.order.findMany({
+      where: {
+        createdAt: {
+          gte: today
+        }
+      }
+    })).reduce((sum, order) => sum + order.total, 0);
+
+    const pendingOrders = await prisma.order.count({
+      where: { status: 'PENDING' }
+    });
+
     res.json({
       success: true,
       dashboard: {
@@ -18,6 +40,9 @@ export const dashboardMetrics = async (_req: Request, res: Response) => {
         totalRevenue,
         totalProducts,
         totalCustomers,
+        todayOrders,
+        todayRevenue,
+        pendingOrders,
       },
     });
   } catch (error) {
@@ -65,7 +90,12 @@ export const manageOrders = async (_req: Request, res: Response) => {
 
 export const manageProducts = async (_req: Request, res: Response) => {
   try {
-    const products = await prisma.product.findMany();
+    const products = await prisma.product.findMany({
+      include: {
+        category: true,
+        brand: true,
+      },
+    });
     res.json({ success: true, products });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error fetching products' });

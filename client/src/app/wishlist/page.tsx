@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { FiHeart, FiShoppingCart, FiTrash2, FiArrowLeft } from 'react-icons/fi';
 import { authHeaders } from '../../lib/auth';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 export default function WishlistPage() {
   const [wishlist, setWishlist] = useState<any[]>([]);

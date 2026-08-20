@@ -8,7 +8,7 @@ const razorpayKey = process.env.RAZORPAY_KEY || process.env.RAZORPAY_KEY_ID || '
 const razorpaySecret = process.env.RAZORPAY_SECRET || process.env.RAZORPAY_KEY_SECRET || '';
 const stripeSecret = process.env.STRIPE_SECRET || process.env.STRIPE_SECRET_KEY || '';
 
-const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: '2022-11-15' }) : null;
+const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: '2023-10-16' }) : null;
 
 const getRazorpay = () => {
   if (!razorpayKey || !razorpaySecret) return null;

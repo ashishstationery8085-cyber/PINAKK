@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { authHeaders, getAuthToken } from '../../../../../lib/auth';
 import { FiArrowLeft, FiUpload, FiX, FiPlus, FiTrash2, FiSave } from 'react-icons/fi';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 const EditProductPage = () => {
   const { id } = useParams();

@@ -13,6 +13,7 @@ import orderRoutes from './routes/order.routes';
 import adminRoutes from './routes/admin.routes';
 import vendorRoutes from './routes/vendor.routes';
 import paymentRoutes from './routes/payment.routes';
+import deliveryRoutes from './routes/delivery.routes';
 import errorHandler from './middleware/error.middleware';
 
 const app = express();
@@ -58,6 +59,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/vendors', vendorRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/delivery', deliveryRoutes);
 
 app.use(errorHandler);
 

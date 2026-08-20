@@ -23,8 +23,26 @@ const LoginPage = () => {
       const response = await api.post('/auth/login', { email, password });
       if (response.data.success) {
         saveAuthToken(response.data.token);
-        setMessage('Login successful. Redirecting to your dashboard...');
-        setTimeout(() => router.push('/dashboard'), 1500);
+        const role = (response.data.user?.role || '').toUpperCase();
+        console.log('Login successful. Role:', role, 'Full response:', response.data);
+
+        if (role === 'ADMIN') {
+          setMessage('Login successful. Redirecting to admin dashboard...');
+          console.log('Detected ADMIN role, redirecting to /admin');
+          setTimeout(() => router.push('/admin'), 1500);
+        } else if (role === 'VENDOR') {
+          setMessage('Login successful. Redirecting to vendor dashboard...');
+          console.log('Detected VENDOR role, redirecting to /vendors/dashboard');
+          setTimeout(() => router.push('/vendors/dashboard'), 1500);
+        } else if (role === 'DELIVERY_BOY') {
+          setMessage('Login successful. Redirecting to delivery dashboard...');
+          console.log('Detected DELIVERY_BOY role, redirecting to /delivery/dashboard');
+          setTimeout(() => router.push('/delivery/dashboard'), 1500);
+        } else {
+          setMessage('Login successful. Redirecting to your dashboard...');
+          console.log('Detected USER role or no role, redirecting to /dashboard');
+          setTimeout(() => router.push('/dashboard'), 1500);
+        }
       } else {
         setMessage(response.data.message || 'Login failed.');
       }

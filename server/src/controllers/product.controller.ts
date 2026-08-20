@@ -1,6 +1,71 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || `product-${Date.now()}`;
+
+const normalizeProductPayload = async (payload: any) => {
+  const {
+    images,
+    features,
+    tags,
+    category,
+    brand,
+    status,
+    featured,
+    comparePrice,
+    ...rest
+  } = payload;
+
+  const categoryName = typeof category === 'string' ? category : category?.name;
+  const categoryRecord = categoryName
+    ? await prisma.category.findFirst({ where: { name: categoryName } })
+    : null;
+
+  const brandName = typeof brand === 'string' ? brand : brand?.name;
+  const brandRecord = brandName
+    ? await prisma.brand.findFirst({ where: { name: brandName } })
+    : null;
+
+  const name = String(rest.name || 'Untitled Product').trim();
+  const description = String(rest.description || '').trim();
+  const price = Number(rest.price ?? 0);
+  const stock = Number(rest.stock ?? 0);
+  const normalizedImages = Array.isArray(images) ? images : images ? [images] : [];
+  const normalizedFeatures = Array.isArray(features)
+    ? features
+    : features
+      ? [features]
+      : Array.isArray(tags)
+        ? tags
+        : [];
+
+  if (!categoryRecord) {
+    throw new Error('Category not found');
+  }
+
+  return {
+    ...rest,
+    name,
+    description,
+    slug: rest.slug || slugify(name),
+    sku: rest.sku || `PIN-${Date.now()}`,
+    price,
+    stock,
+    images: JSON.stringify(normalizedImages),
+    features: JSON.stringify(normalizedFeatures),
+    categoryId: categoryRecord.id,
+    brandId: brandRecord?.id ?? undefined,
+    discountPrice: comparePrice ? Number(comparePrice) : undefined,
+    isActive: status === 'inactive' ? false : true,
+    isFeatured: Boolean(featured),
+  };
+};
+
 export const listProducts = async (req: Request, res: Response) => {
   try {
     const { search, category, brand, minPrice, maxPrice, sort, page = 1, limit = 20 } = req.query;
@@ -55,8 +120,10 @@ export const getProduct = async (req: Request, res: Response) => {
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
+    const productData = await normalizeProductPayload(req.body);
+
     const product = await prisma.product.create({
-      data: req.body,
+      data: productData,
       include: {
         category: true,
         subcategory: true,
@@ -64,17 +131,21 @@ export const createProduct = async (req: Request, res: Response) => {
       },
     });
     res.status(201).json({ success: true, product });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating product:', error);
-    res.status(500).json({ success: false, message: 'Error creating product' });
+    const message = error?.message === 'Category not found'
+      ? 'Category not found. Select a valid category before creating the product.'
+      : 'Error creating product';
+    res.status(400).json({ success: false, message });
   }
 };
 
 export const updateProduct = async (req: Request, res: Response) => {
   try {
+    const productData = await normalizeProductPayload({ ...req.body, slug: req.body.slug || undefined, sku: req.body.sku || undefined });
     const product = await prisma.product.update({
       where: { id: req.params.id },
-      data: req.body,
+      data: productData,
       include: {
         category: true,
         subcategory: true,
@@ -82,9 +153,12 @@ export const updateProduct = async (req: Request, res: Response) => {
       },
     });
     res.json({ success: true, product });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating product:', error);
-    res.status(500).json({ success: false, message: 'Error updating product' });
+    const message = error?.message === 'Category not found'
+      ? 'Category not found. Select a valid category before updating the product.'
+      : 'Error updating product';
+    res.status(400).json({ success: false, message });
   }
 };
 

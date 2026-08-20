@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { authHeaders } from '../../lib/auth';
 import { FiMapPin, FiTruck, FiCreditCard, FiCheck, FiArrowRight, FiArrowLeft, FiLock, FiShield, FiRefreshCw } from 'react-icons/fi';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 const CheckoutPage = () => {
   const router = useRouter();

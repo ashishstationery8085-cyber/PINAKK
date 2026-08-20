@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { authHeaders, getAuthToken } from '../../lib/auth';
 import { FiHome, FiShoppingBag, FiPackage, FiUsers, FiSettings, FiTrendingUp, FiDollarSign, FiEye, FiClock, FiArrowRight, FiLogOut, FiBarChart, FiGrid } from 'react-icons/fi';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api';
 
 const AdminPage = () => {
   const router = useRouter();
